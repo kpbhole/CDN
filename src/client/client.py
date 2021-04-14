@@ -2,6 +2,8 @@ import sys
 import selectors
 import socket
 import os
+from flask import Flask, render_template
+app = Flask(__name__)
 
 sys.path.insert(0, "../")
 
@@ -146,50 +148,56 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 
 	return -2
 
-
-while True:
+def get_file():
 	contentreq = input("Enter content id: ")
 	try:
 		contentReq = int(contentreq)
 	except:
 		print("Enter only numbers.")
-		continue
+		
 	if(contentReq<=0):
 		print("Content id cannot be less than 1")
-		continue
+		
 	seqNo = -1
 	location_id = int(sys.argv[1])
 	n_msg = ClientReqLBMessage(contentReq,location_id)
 	prev_edge_ip = n_msg.prev_edge_ip
-	while True:
-		# seqNo = requestFile(msg.ip, EDGE_SERVER_PORT ,contentReq)
-		if seqNo != -2:
-			## TO DO get new edge server from load balancer
-			s, err = connectLB(ipblocks)
-			if err==0:
-				input("Load Balancer could not be reached!")
-			n_msg = ClientReqLBMessage(contentReq,location_id,prev_edge_ip)
-			try:
-				input("Press enter to request new edge server")
-				n_msg.send(s)
-				print('Hi')
-				n_msg = ClientResLBMessage()
-				n_msg.receive(s)
-				prev_edge_ip = n_msg.ip
-				input("Press enter to connect to edge server!")
-				if n_msg.ip=='0.0.0.0':
-					print("No edge servers available.")
-					input("Press enter to try again!")
-					continue
 
-				seqNo = requestFile(n_msg.ip, EDGE_SERVER_PORT ,contentReq, seqNo+1)
-			except:
-				print("Error communicating with LB")
-				input("Press enter to request another/same file!")
-				# break
-			s.close()
-		else:
-			break
+		# seqNo = requestFile(msg.ip, EDGE_SERVER_PORT ,contentReq)
+	if seqNo != -2:
+		## TO DO get new edge server from load balancer
+		s, err = connectLB(ipblocks)
+		if err==0:
+			input("Load Balancer could not be reached!")
+		n_msg = ClientReqLBMessage(contentReq,location_id,prev_edge_ip)
+		try:
+			input("Press enter to request new edge server")
+			n_msg.send(s)
+			print('Hi')
+			n_msg = ClientResLBMessage()
+			n_msg.receive(s)
+			prev_edge_ip = n_msg.ip
+			input("Press enter to connect to edge server!")
+			if n_msg.ip=='0.0.0.0':
+				print("No edge servers available.")
+				input("Press enter to try again!")
+
+			seqNo = requestFile(n_msg.ip, EDGE_SERVER_PORT ,contentReq, seqNo+1)
+		except:
+			print("Error communicating with LB")
+			input("Press enter to request another/same file!")
+			# break
+		s.close()
+	else:
+		pass
 
 
 #############
+
+@app.route('/')
+def index():
+	return render_template('index.html')
+
+if __name__ == "__main__":
+	# get_file()
+	app.run()
