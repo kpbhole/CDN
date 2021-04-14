@@ -17,22 +17,22 @@ from edgeServer.edgeServer import md5
 
 ############# Get IP of load balancer from DNS
 
-# s = socket.socket()         
-# host = DNS_IP ## DNS_IP
-# port = DNS_PORT            
+s = socket.socket()         
+host = DNS_IP ## DNS_IP
+port = DNS_PORT            
 
-# s.connect((host, port))
+s.connect((host, port))
 
-# print("Requesting IP from DNS")
-# msg = DNSRequestMessage(1, "www.mycdn.com")
-# msg.send(s)
+print("Requesting IP from DNS")
+msg = DNSRequestMessage(1, "www.mycdn.com")
+msg.send(s)
 
-# msg = DNSResponseMessage()
-# msg.receive(s)
-# ipblocks = msg.ipblocks
-# print(ipblocks)
+msg = DNSResponseMessage()
+msg.receive(s)
+ipblocks = msg.ipblocks
+print(ipblocks)
 
-# s.close()
+s.close()
 
 ############# Request file from load balancer
 def connectLB(ipblocks):
@@ -63,10 +63,6 @@ def connectLB(ipblocks):
 		print("Connection established to the load balancer")
 		return s,1
 
-# s,err = connectLB(ipblocks)
-# if err==0:
-# 	raise Exception("Load Balancer could not be reached!")
-
 ############# Request file from redirected IP of edge server
 
 def requestFile(edgeIP,edgePort,content_id,seq_no=0):
@@ -77,7 +73,7 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 	## -1 if nothing is received
 	## else the sequence number
 
-	soc = socket.socket()             # Create a socket object                   
+	soc = socket.socket()
 	soc.settimeout(30)
 	
 	try:
@@ -108,7 +104,7 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 		param = 'ab'
 	else:
 		param = 'wb'
-	with open('rec_' + file_des.file_name, param) as f:
+	with open('/static/css/' + file_des.file_name, param) as f:
 		print('file opened')
 		print("Content ID: ",file_des.content_id)
 		if seq_no!=0:
@@ -125,7 +121,7 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 				print(e)
 				return last_seq_number_recv
 			
-			print("Sequence no: ",msg.seq_no)
+			# print("Sequence no: ",msg.seq_no)
 			last_seq_number_recv = msg.seq_no
 			data = msg.data
 			total_received+=len(data)
@@ -138,18 +134,16 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 
 ############# Verify file, close connections and show success
 	
-	if md5('rec_'+file_des.file_name)==file_des.md5_val:
+	if md5('/static/css/'+file_des.file_name)==file_des.md5_val:
 		print("File download success!")
 	else:
 		print("MD5 does not match")
-		os.remove('rec_'+file_des.file_name)
-		print("Try downloading again")
-		## TODO What to do with the file then??? 
-
+		os.remove('/static/css/'+file_des.file_name)
+		print("Try downloading again")		
 	return -2
 
 def get_file():
-	contentreq = input("Enter content id: ")
+	contentreq = "1234"
 	try:
 		contentReq = int(contentreq)
 	except:
@@ -164,20 +158,19 @@ def get_file():
 	prev_edge_ip = n_msg.prev_edge_ip
 
 		# seqNo = requestFile(msg.ip, EDGE_SERVER_PORT ,contentReq)
-	if seqNo != -2:
-		## TO DO get new edge server from load balancer
+	if seqNo != -2:		
 		s, err = connectLB(ipblocks)
 		if err==0:
 			input("Load Balancer could not be reached!")
 		n_msg = ClientReqLBMessage(contentReq,location_id,prev_edge_ip)
 		try:
-			input("Press enter to request new edge server")
+			# input("Press enter to request new edge server")
 			n_msg.send(s)
-			print('Hi')
+			# print('Hi')
 			n_msg = ClientResLBMessage()
 			n_msg.receive(s)
 			prev_edge_ip = n_msg.ip
-			input("Press enter to connect to edge server!")
+			# input("Press enter to connect to edge server!")
 			if n_msg.ip=='0.0.0.0':
 				print("No edge servers available.")
 				input("Press enter to try again!")
@@ -199,5 +192,5 @@ def index():
 	return render_template('index.html')
 
 if __name__ == "__main__":
-	# get_file()
-	app.run()
+	get_file()
+	app.run(host='0.0.0.0', port=80)
