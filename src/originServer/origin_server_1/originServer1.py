@@ -84,9 +84,9 @@ def synchronizer():
 					if file.status == ContentStatus.UNSYNCED:
 						# Sync this file
 						print("Syncing file", file.filename, "with content id", file.content_id)
-						file_size = int(os.stat('data/'+file.filename).st_size)
+						file_size = int(os.stat('../data/'+file.filename).st_size)
 						file_des = FileDescriptionMessage(file.content_id,file_size,file.filename,md5('data/'+file.filename))
-						print(file.content_id,file_size,file.filename,md5('data/'+file.filename))
+						print(file.content_id,file_size,file.filename,md5('../data/'+file.filename))
 						file_des.send(conn)
 
 						# receive response from other server
@@ -99,7 +99,7 @@ def synchronizer():
 							content_dictL.release()
 							continue
 
-						f = open('data/'+file.filename, 'rb')
+						f = open('../data/'+file.filename, 'rb')
 						l = f.read(1018)
 						i = 0
 						while (l):
@@ -179,7 +179,7 @@ def synchronize_receive():
 					content_dict[file_des.content_id] = Content(file_des.content_id, file_des.file_name, ContentStatus.INCOMPLETE)
 					dump()
 					content_dictL.release()
-					with open('data/' + file_des.file_name, 'wb') as f:
+					with open('../data/' + file_des.file_name, 'wb') as f:
 						print('file opened')
 						print("Content ID: ",file_des.content_id)
 						content_id = file_des.content_id
@@ -233,11 +233,11 @@ def serve_edge_server_helper(conn, addr):
 		if message.content_id in content_dict:
 			filename = content_dict[message.content_id].filename
 	                # before sending the file, send its details plus a checksum
-			file_size = int(os.stat('data/'+filename).st_size)
+			file_size = int(os.stat('../data/'+filename).st_size)
 			print("filename: ",filename)
 			file_des = FileDescriptionMessage(message.content_id, file_size, filename, md5('data/'+filename))
 			file_des.send(conn)
-			f = open('data/'+filename, 'rb')
+			f = open('../data/'+filename, 'rb')
 			l = f.read(1018)
 			i = 0
 			while (l):
