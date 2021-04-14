@@ -233,7 +233,7 @@ def serve_edge_server_helper(conn, addr):
 	                # before sending the file, send its details plus a checksum
 			file_size = int(os.stat('../data/'+filename).st_size)
 			print("filename: ",filename)
-			file_des = FileDescriptionMessage(message.content_id, file_size, filename, md5('data/'+filename))
+			file_des = FileDescriptionMessage(message.content_id, file_size, filename, md5('../data/'+filename))
 			file_des.send(conn)
 			f = open('../data/'+filename, 'rb')
 			l = f.read(1018)
