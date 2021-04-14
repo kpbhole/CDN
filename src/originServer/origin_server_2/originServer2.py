@@ -292,7 +292,7 @@ def serve_content_provider_helper(c,addr):
 	dump()
 	content_dictL.release()
 
-	with open('data/'+file_des.file_name,'wb') as f:
+	with open('../data/'+file_des.file_name,'wb') as f:
 		recv_size = 0 
 		file_size = file_des.file_size
 		while True:
