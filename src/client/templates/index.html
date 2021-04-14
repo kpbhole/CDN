@@ -3,13 +3,29 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
-        <title>CDN Test</title>
+        <title>CDN</title>
     </head>
     <body>
-        <h1>Getting files from CDN</h1>
-        <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Reiciendis tempora doloribus consectetur atque ullam maxime vel ad, perspiciatis itaque aliquid, facilis sint voluptatibus odit accusantium neque? Ullam aut dolorum minus.</p>
-        <p>Cloud Computing</p>
-        <img src="{{ url_for('static', filename= 'css/share.png') }}" >
+        <h1>Implementation of CDN</h1>
+        <div class="members">
+            <h4>Cloud Computing Mini Project:</h4>
+            <p>Atharva Bapat, D17B - 07</p>
+            <p>Kunal Bathija, D17B - 09</p>
+            <p>Kalpesh Bhole, D17B - 11</p>
+        </div>
+        <div class="desc">
+            <p>Click on the below buttons to fetech the css and image from CDN. The request is sent to the edge server. The edge server connects to the origin server through a load balancer to fetch the required files</p>
+        </div>
+        <div>
+            <a href="/get_css"><input type="button">Get CSS File from Server</a> 
+        </div>
+        <div>
+            <a href="/get_image"><input type="button">Get Image from server</a>
+        </div>
+        <div style="width: 90%;">
+            <img src="{{ url_for('static', filename= 'css/share.png') }}" >
+        </div>
+        
         
     </body>
 </html>

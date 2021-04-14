@@ -2,11 +2,11 @@ import sys
 import selectors
 import socket
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 app = Flask(__name__)
 
 sys.path.insert(0, "../")
-i = 1
+
 from messages.dns_request_message import *
 from messages.dns_response_message import *
 from messages.client_req_lb_message import *
@@ -142,12 +142,11 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 		print("Try downloading again")		
 	return -2
 
-def get_file(cont):
+def get_file(cont, i):
 	contentReq = int(cont)	
 		
 	seqNo = -1
 	location_id = i
-	i += 1
 	n_msg = ClientReqLBMessage(contentReq,location_id)
 	prev_edge_ip = n_msg.prev_edge_ip
 
@@ -183,7 +182,15 @@ def get_file(cont):
 def index():
 	return render_template('index.html')
 
+@app.route('/get_css')
+def getCss():
+	get_file("1234",1)
+	return redirect(url_for('index'))
+
+@app.route('/get_image')
+def getImage():
+	get_file("5678",2)
+	return redirect(url_for('index'))
+
 if __name__ == "__main__":
-	get_file("1234")
-	get_file("5678")
 	app.run(host='0.0.0.0', port=80)

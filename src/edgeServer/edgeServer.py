@@ -228,7 +228,7 @@ def fetch_and_send(conn,addr,content_id,last_received_seq_no):
 				lru_dict_l.release()
 
 				content_dict_l.acquire()
-				os.remove('data/'+content_dict[content_id_to_delete])
+				os.remove('/data/'+content_dict[content_id_to_delete])
 				del content_dict[content_id_to_delete]
 				dumpContentDict()
 				content_dict_l.release()
@@ -244,9 +244,9 @@ def fetch_and_send(conn,addr,content_id,last_received_seq_no):
 			if flag!=-1:
 				file_des.send(conn)
 			flag = 0		
-			print('data/'+file_des.file_name+"...........")
+			print('/data/'+file_des.file_name+"...........")
 			
-			with open('data/'+file_des.file_name,'wb') as f:
+			with open('/data/'+file_des.file_name,'wb') as f:
 				
 				recv_size = 0 
 				file_size = file_des.file_size
@@ -289,12 +289,12 @@ def fetch_and_send(conn,addr,content_id,last_received_seq_no):
 
 				print("successfully received the file")
 
-			if md5('data/'+file_des.file_name) == file_des.md5_val:
+			if md5('/data/'+file_des.file_name) == file_des.md5_val:
 				print("MD5 Matched!")
 
 			else:
 				print("MD5 didn't match")
-				os.remove('data/'+file_des.file_name)
+				os.remove('/data/'+file_des.file_name)
 
 			content_dict_l.acquire()
 			content_dict[content_id]=file_des.file_name
@@ -326,17 +326,17 @@ def serve_client(conn,addr):
 	if message.content_id in content_dict:
 		filename = content_dict[message.content_id]
                 # before sending the file, send its details plus a checksum
-		file_size = int(os.stat('data/'+filename).st_size)
+		file_size = int(os.stat('/data/'+filename).st_size)
 		
 		lru_dict_l.acquire()
 		lru_dict[message.content_id] = (time.time(), file_size)
 		dumpLRUDict()
 		lru_dict_l.release()
 		
-		file_des = FileDescriptionMessage(message.content_id, file_size, filename, md5('data/'+filename))
+		file_des = FileDescriptionMessage(message.content_id, file_size, filename, md5('/data/'+filename))
 		file_des.send(conn)
 		
-		f = open('data/'+filename, 'rb')
+		f = open('/data/'+filename, 'rb')
 		# f.seek(message.seq_no*1018)
 		
 		l = f.read(1018)
