@@ -104,7 +104,7 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 		param = 'ab'
 	else:
 		param = 'wb'
-	with open('/static/css/' + file_des.file_name, param) as f:
+	with open('static/css/' + file_des.file_name, param) as f:
 		print('file opened')
 		print("Content ID: ",file_des.content_id)
 		if seq_no!=0:
@@ -144,13 +144,7 @@ def requestFile(edgeIP,edgePort,content_id,seq_no=0):
 
 def get_file():
 	contentreq = "1234"
-	try:
-		contentReq = int(contentreq)
-	except:
-		print("Enter only numbers.")
-		
-	if(contentReq<=0):
-		print("Content id cannot be less than 1")
+	contentReq = int(contentreq)	
 		
 	seqNo = -1
 	location_id = int(sys.argv[1])
@@ -177,8 +171,7 @@ def get_file():
 
 			seqNo = requestFile(n_msg.ip, EDGE_SERVER_PORT ,contentReq, seqNo+1)
 		except:
-			print("Error communicating with LB")
-			input("Press enter to request another/same file!")
+			print("Error communicating with LB")			
 			# break
 		s.close()
 	else:
