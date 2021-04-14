@@ -17,22 +17,22 @@ from edgeServer.edgeServer import md5
 
 ############# Get IP of load balancer from DNS
 
-s = socket.socket()         
-host = DNS_IP ## DNS_IP
-port = DNS_PORT            
+# s = socket.socket()         
+# host = DNS_IP ## DNS_IP
+# port = DNS_PORT            
 
-s.connect((host, port))
+# s.connect((host, port))
 
-print("Requesting IP from DNS")
-msg = DNSRequestMessage(1, "www.mycdn.com")
-msg.send(s)
+# print("Requesting IP from DNS")
+# msg = DNSRequestMessage(1, "www.mycdn.com")
+# msg.send(s)
 
-msg = DNSResponseMessage()
-msg.receive(s)
-ipblocks = msg.ipblocks
-print(ipblocks)
+# msg = DNSResponseMessage()
+# msg.receive(s)
+# ipblocks = msg.ipblocks
+# print(ipblocks)
 
-s.close()
+# s.close()
 
 ############# Request file from load balancer
 def connectLB(ipblocks):
