@@ -83,7 +83,7 @@ def synchronizer():
 						# Sync this file
 						print("Syncing file", file.filename, "with content id", file.content_id)
 						file_size = int(os.stat('../data/'+file.filename).st_size)
-						file_des = FileDescriptionMessage(file.content_id,file_size,file.filename,md5('data/'+file.filename))
+						file_des = FileDescriptionMessage(file.content_id,file_size,file.filename,md5('../data/'+file.filename))
 						print(file.content_id,file_size,file.filename,md5('../data/'+file.filename))
 						file_des.send(conn)
 
