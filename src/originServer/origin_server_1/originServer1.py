@@ -317,7 +317,7 @@ def serve_content_provider_helper(c,addr):
 
 	print("successfully received the file")
 
-	if md5('data/'+file_des.file_name) == file_des.md5_val:
+	if md5('../data/'+file_des.file_name) == file_des.md5_val:
 		print("MD5 Matched!")
 	else:
 		print("MD5 didn't match")
